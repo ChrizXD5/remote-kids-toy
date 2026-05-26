@@ -22,35 +22,35 @@ void music::littleStar() {
 
   while (!done)
   {
-    playNote(NOTE_C4, 500);
-    playNote(NOTE_C4, 500);
-    playNote(NOTE_G4, 500);
-    playNote(NOTE_G4, 500);
+    playTone(NOTE_C4, 500);
+    playTone(NOTE_C4, 500);
+    playTone(NOTE_G4, 500);
+    playTone(NOTE_G4, 500);
 
-    playNote(NOTE_A4, 500);
-    playNote(NOTE_A4, 500);
-    playNote(NOTE_G4, 1000);
+    playTone(NOTE_A4, 500);
+    playTone(NOTE_A4, 500);
+    playTone(NOTE_G4, 1000);
 
-    playNote(NOTE_F4, 500);
-    playNote(NOTE_F4, 500);
-    playNote(NOTE_E4, 500);
-    playNote(NOTE_E4, 500);
+    playTone(NOTE_F4, 500);
+    playTone(NOTE_F4, 500);
+    playTone(NOTE_E4, 500);
+    playTone(NOTE_E4, 500);
     
-    playNote(NOTE_D4, 500);
-    playNote(NOTE_D4, 500);
-    playNote(NOTE_C4, 1000);
+    playTone(NOTE_D4, 500);
+    playTone(NOTE_D4, 500);
+    playTone(NOTE_C4, 1000);
 
     if (pass2) done = true;
     while (!pass1 || !pass2)
     {
-      playNote(NOTE_G4, 500);
-      playNote(NOTE_G4, 500);
-      playNote(NOTE_F4, 500);
-      playNote(NOTE_F4, 500);
+      playTone(NOTE_G4, 500);
+      playTone(NOTE_G4, 500);
+      playTone(NOTE_F4, 500);
+      playTone(NOTE_F4, 500);
       
-      playNote(NOTE_E4, 500);
-      playNote(NOTE_E4, 500);
-      playNote(NOTE_D4, 1000);
+      playTone(NOTE_E4, 500);
+      playTone(NOTE_E4, 500);
+      playTone(NOTE_D4, 1000);
       
       if (!pass1) pass1 = true;
       else pass2 = true;
@@ -62,7 +62,7 @@ void music::littleStar() {
 // sets buzzer pin
 music::music(int b) : buzzer(b) {}
 
-void music::playNote(int note, int duration) {
+void music::playTone(int note, int duration) {
   tone(buzzer, note);
   delay(duration);
 
@@ -70,7 +70,7 @@ void music::playNote(int note, int duration) {
   delay(50);
 }
 
-void music::playSong(int songSelection) {
+void music::play(int songSelection) {
   switch(songSelection)
   {
     case 1:

@@ -4,14 +4,14 @@
 class music {
 private:
     int buzzer;
-    void playNote(int note, int duration);
     void littleStar();
 public:
     // constructor
     // sets the buzzer pin
     music(int b);
     
-    void playSong(int songSelection);
+    void playTone(int note, int duration);
+    void play(int songSelection);
 };
 
 #endif
