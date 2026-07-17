@@ -1,8 +1,13 @@
+// Uncomment to enable debug mode
+// Debug info can be seen through serial monitor at 9600 baud
+#define DEBUG_MODE
+
 // digital pin output
 #define PIN_IR_RECEIVE 11
-#define BUZZER_PIN 12
+#define PIN_BUZZER 12
 #define PIN_LED0 2
-#define PIN_LED1 3
+// LED BROKEN :(
+//#define PIN_LED1 3
 #define PIN_LED2 4
 #define PIN_LED3 5
 #define PIN_LED4 6
@@ -33,60 +38,158 @@
 #include "music.h"
 
 void setup() {
-    Serial.begin(9600);
+
+    #ifdef DEBUG_MODE
+        Serial.begin(9600);
+        Serial.println("DEBUG ENABLED");
+    #endif
 
     IrReceiver.begin(PIN_IR_RECEIVE, ENABLE_LED_FEEDBACK);
 
-    Serial.println("IR Receiver Ready");
-
     pinMode(PIN_LED0, OUTPUT);
-    pinMode(PIN_LED1, OUTPUT);
+    // pinMode(PIN_LED1, OUTPUT);
     pinMode(PIN_LED2, OUTPUT);
     pinMode(PIN_LED3, OUTPUT);
+    pinMode(PIN_LED4, OUTPUT);
+    pinMode(PIN_LED5, OUTPUT);
+    pinMode(PIN_LED6, OUTPUT);
+    pinMode(PIN_LED7, OUTPUT);
+
+    #ifdef DEBUG_MODE
+        Serial.println("SETUP DONE");
+    #endif
 }
 
 void loop() {
-    music player(BUZZER_PIN);
-    long data = 0;
-    if (IrReceiver.decode()) {
+    music player(PIN_BUZZER);
 
-        Serial.print("Code: ");
-        data = IrReceiver.decodedIRData.decodedRawData;
-        Serial.println(data, HEX);
-        IrReceiver.resume();
-    }
+    
 
-    switch (data)
+    char currentCode;
+    while (true)
     {
-        // 1
-        case 0xBA45FF00:
-        if (digitalRead(PIN_LED0) == LOW)
-            digitalWrite(PIN_LED0, HIGH);
-        else
-            digitalWrite(PIN_LED0, LOW);
+        IrReceiver.start();
+
+        if (IrReceiver.decode())
+        {
+            IrReceiver.stop();
+
+            unsigned long data = IrReceiver.decodedIRData.decodedRawData;
+
+            char receivedCode = translateCode(data);
+
+            if (receivedCode == '=')
+            {
+                receivedCode = currentCode;    
+            }
+
+            if (receivedCode >= '0' && receivedCode <= '9')
+            {
+                numberTone(receivedCode);
+            }
+            
+
+            #ifdef DEBUG_MODE
+                Serial.println(data, HEX);
+                Serial.println(translateCode(data));
+            #endif
+
+            IrReceiver.resume();
+        }
+        else 
+        {
+            delay(100);
+            noTone(PIN_BUZZER);
+        }
+    }
+}
+
+char translateCode(unsigned long code) {
+    switch (code) {
+        case REMOTE_1:
+        return '1';
         break;
-        // 2
-        case 0xB946FF00:
-        if (digitalRead(PIN_LED1) == LOW)
-            digitalWrite(PIN_LED1, HIGH);
-        else
-            digitalWrite(PIN_LED1, LOW);
+        case REMOTE_2:
+        return '2';
         break;
-        // 3
-        case 0xB847FF00:
-        if (digitalRead(PIN_LED2) == LOW)
-            digitalWrite(PIN_LED2, HIGH);
-        else
-            digitalWrite(PIN_LED2, LOW);
+        case REMOTE_3:
+        return '3';
         break;
-        // 4
-        case 0xBB44FF00:
-        if (digitalRead(PIN_LED3) == LOW)
-            digitalWrite(PIN_LED3, HIGH);
-        else
-            digitalWrite(PIN_LED3, LOW);
+        case REMOTE_4:
+        return '4';
         break;
+        case REMOTE_5:
+        return '5';
+        break;
+        case REMOTE_6:
+        return '6';
+        break;
+        case REMOTE_7:
+        return '7';
+        break;
+        case REMOTE_8:
+        return '8';
+        break;
+        case REMOTE_9:
+        return '9';
+        break;
+        case REMOTE_0:
+        return '0';
+        break;
+        case REMOTE_STAR:
+        return '*';
+        break;
+        case REMOTE_POUND:
+        return '#';
+        break;
+        case REMOTE_UP:
+        return 'U';
+        break;
+        case REMOTE_DOWN:
+        return 'D';
+        break;
+        case REMOTE_LEFT:
+        return 'L';
+        break;
+        case REMOTE_RIGHT:
+        return 'R';
+        break;
+        case REMOTE_OK:
+        return 'O';
+        break;
+        
+        // when the same button is held down this is returned
+        case 0x0:
+        return '=';
+
         default:
         break;
+    }
+
+    return '?';
+}
+
+// the offset is used to convert a char into a int
+// 48 is decimal code for '0' in ASCII
+#define OFFSET 48
+void numberTone(char input) {
+    int multiplier = input - OFFSET;
+    tone(PIN_BUZZER, (75 * multiplier) + 200);
+}
+
+void toggleLED(const int PIN_NUMBER) {
+    if (digitalRead(PIN_NUMBER) == LOW) {
+        digitalWrite(PIN_NUMBER, HIGH);
+        
+        #ifdef DEBUG_MODE
+            Serial.print("PIN " + String(PIN_NUMBER) + " ON\n");
+        #endif
+    }
+    else {
+        digitalWrite(PIN_NUMBER, LOW);
+        
+        #ifdef DEBUG_MODE
+            Serial.print("PIN " + String(PIN_NUMBER) + " OFF\n");
+        #endif
     }
 }
