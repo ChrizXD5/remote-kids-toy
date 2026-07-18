@@ -111,6 +111,77 @@ namespace songs {
     playTone(NOTE_D4, 750, buzzer);
     playTone(NOTE_C4, 1500, buzzer);
   }
+  
+  void littleLamb(int buzzer) {
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_C4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_E4, 500, buzzer);
+	delay(500);
+	
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	delay(500);
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_G4, 500, buzzer);
+	playTone(NOTE_G4, 500, buzzer);
+	delay(500);
+	
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_C4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_E4, 500, buzzer);
+	
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_E4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_C4, 750, buzzer);
+  }
+  
+  // (;
+  void babyShark(int buzzer) {
+	
+	playTone(NOTE_C4, 500, buzzer);
+	playTone(NOTE_D4, 500, buzzer);
+	playTone(NOTE_F4, 250, buzzer);
+	playTone(NOTE_F4, 250, buzzer);
+	playTone(NOTE_F4, 250, buzzer);
+	
+	playTone(NOTE_F4, 125, buzzer);
+	playTone(NOTE_F4, 125, buzzer);
+	playTone(NOTE_F4, 125, buzzer);
+	playTone(NOTE_F4, 125, buzzer);
+	playTone(NOTE_F4, 250, buzzer);
+	
+	
+	for (int i = 0; i < 1; ++i)
+	{
+		playTone(NOTE_C4, 250, buzzer);
+		playTone(NOTE_D4, 250, buzzer);
+		playTone(NOTE_F4, 250, buzzer);
+		playTone(NOTE_F4, 250, buzzer);
+		playTone(NOTE_F4, 250, buzzer);
+		playTone(NOTE_F4, 125, buzzer);
+		playTone(NOTE_F4, 125, buzzer);
+		playTone(NOTE_F4, 125, buzzer);
+		playTone(NOTE_F4, 125, buzzer);
+		playTone(NOTE_F4, 250, buzzer);
+		
+	}
+	
+	playTone(NOTE_F4, 250, buzzer);
+	playTone(NOTE_F4, 250, buzzer);
+	playTone(NOTE_E4, 500, buzzer);
+  }
 }
 
 // constructor
@@ -126,6 +197,14 @@ void music::play(int songSelection) {
     case 2:
     songs::happyBirthday(buzzer);
     break;
+	case 3:
+	songs::littleLamb(buzzer);
+	break;
+	case 4:
+	songs::babyShark(buzzer);
+	break;
+	case 5:
+	break;
     default:
     break;
   }

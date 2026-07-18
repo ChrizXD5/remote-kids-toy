@@ -2,13 +2,15 @@
 // Debug info can be seen through serial monitor at 9600 baud
 #define DEBUG_MODE
 
+#define IR_USE_AVR_TIMER1
+
 // digital pin output
 #define PIN_IR_RECEIVE 11
 #define PIN_BUZZER 12
 #define PIN_LED0 2
 // LED BROKEN :(
-//#define PIN_LED1 3
-#define PIN_LED2 4
+//#define PIN_LED1 4
+#define PIN_LED2 3
 #define PIN_LED3 5
 #define PIN_LED4 6
 #define PIN_LED5 7
@@ -44,10 +46,11 @@ void setup() {
         Serial.println("DEBUG ENABLED");
     #endif
 
-    IrReceiver.begin(PIN_IR_RECEIVE, ENABLE_LED_FEEDBACK);
+    IrReceiver.begin(PIN_IR_RECEIVE);
 
     pinMode(PIN_LED0, OUTPUT);
-    // pinMode(PIN_LED1, OUTPUT);
+    // LED BROKEN
+	// pinMode(PIN_LED1, OUTPUT);
     pinMode(PIN_LED2, OUTPUT);
     pinMode(PIN_LED3, OUTPUT);
     pinMode(PIN_LED4, OUTPUT);
@@ -62,32 +65,55 @@ void setup() {
 
 void loop() {
     music player(PIN_BUZZER);
-
-    
-
     char currentCode;
+
     while (true)
     {
-        IrReceiver.start();
-
         if (IrReceiver.decode())
         {
-            IrReceiver.stop();
-
             unsigned long data = IrReceiver.decodedIRData.decodedRawData;
-
             char receivedCode = translateCode(data);
-
-            if (receivedCode == '=')
-            {
-                receivedCode = currentCode;    
-            }
 
             if (receivedCode >= '0' && receivedCode <= '9')
             {
                 numberTone(receivedCode);
+				numberLED(receivedCode);
+                delay(75);
+                noTone(PIN_BUZZER);
             }
-            
+			else {
+				switch (receivedCode) {
+					case '*':
+					case '#':
+					numberTone('0');
+					numberLED(receivedCode);
+                    delay(75);
+                    noTone(PIN_BUZZER);
+					break;
+
+					// UP
+					case 'U':
+					player.play(1);
+					break;
+					// DOWN
+					case 'D':
+					player.play(2);
+					break;
+					// LEFT
+					case 'L':
+					player.play(3);
+					break;
+					// RIGHT
+					case 'R':
+					player.play(4);
+					break;
+
+					// OK
+					case 'O':
+					default:
+					break;
+				}
+			}
 
             #ifdef DEBUG_MODE
                 Serial.println(data, HEX);
@@ -96,14 +122,10 @@ void loop() {
 
             IrReceiver.resume();
         }
-        else 
-        {
-            delay(100);
-            noTone(PIN_BUZZER);
-        }
     }
 }
 
+// translates remote code into a char
 char translateCode(unsigned long code) {
     switch (code) {
         case REMOTE_1:
@@ -173,9 +195,45 @@ char translateCode(unsigned long code) {
 // 48 is decimal code for '0' in ASCII
 #define OFFSET 48
 void numberTone(char input) {
-    int multiplier = input - OFFSET;
+	noTone(PIN_BUZZER);
+	int multiplier = input - OFFSET;
     tone(PIN_BUZZER, (75 * multiplier) + 200);
 }
+
+void numberLED(char input) {
+	switch (input) {
+		case '*':
+		toggleLED(PIN_LED7);
+		case '#':
+		toggleLED(PIN_LED5);
+		case '0':
+		toggleLED(PIN_LED2);
+		toggleLED(PIN_LED4);
+		case '9':
+		toggleLED(PIN_LED3);
+		toggleLED(PIN_LED6);
+		case '8':
+		toggleLED(PIN_LED7);
+		case '7':
+		toggleLED(PIN_LED6);
+		case '6':
+		toggleLED(PIN_LED5);
+		case '5':
+		toggleLED(PIN_LED4);
+		case '4':
+		toggleLED(PIN_LED3);
+		case '3':
+		toggleLED(PIN_LED2);
+		case '2':
+		// LED BROKEN
+		// toggleLED(PIN_LED1);
+		case '1':
+		toggleLED(PIN_LED0);
+		default:
+		break;
+	}
+}
+
 
 void toggleLED(const int PIN_NUMBER) {
     if (digitalRead(PIN_NUMBER) == LOW) {
